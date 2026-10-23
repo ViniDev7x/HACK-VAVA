@@ -13,6 +13,13 @@ jobs:
         run: cmake --build build --config Release
       - name: Tests
         run: ctest --test-dir build -C Release --output-on-failure
+      - name: Verify Windows executable
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "build/Release/DPX-EXTERN.exe")) { throw "Executable missing" }
+          $exe = Get-Item "build/Release/DPX-EXTERN.exe"
+          Write-Host "Windows EXE size: $($exe.Length) bytes"
+          Get-FileHash "build/Release/DPX-EXTERN.exe" -Algorithm SHA256
       - uses: actions/upload-artifact@v4
         with:
           name: DPX-EXTERN-Windows-x64
