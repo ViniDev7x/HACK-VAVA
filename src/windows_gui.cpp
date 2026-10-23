@@ -53,14 +53,16 @@ void draw(HDC dc){
   COLORREF c=a.player.visible?RGB(87,214,179):RGB(218,134,85);
   if(showEsp){rect(dc,x-w/2,y-h/2,w,h,c,2);line(dc,x,y-h/2,x,y+h/2,c);line(dc,x-w/2,y,x+w/2,y,c);}
   if(showHealth){int hp=dpx::clampHealth(a.player.health);fill(dc,x-w/2-10,y-h/2,5,h,RGB(55,57,65));fill(dc,x-w/2-10,y+h/2-(h*hp/100),5,h*hp/100,hp>60?RGB(65,220,117):hp>30?RGB(241,190,60):RGB(245,76,76));}
-  wchar_t name[100];wsprintfW(name,L"BOT %02d  HP:%d  ARM:%d",a.player.id,a.player.health,a.player.armor);label(dc,x-w/2,y-h/2-20,name,RGB(222,227,239));
+  wchar_t name[100];wsprintfW(name,L"BOT %02d  HP:%d  ARM:%d",a.player.id,a.player.health,a.player.armor);// Stagger labels to reduce overlap between nearby simulated targets.
+  const int labelY=y-h/2-22-(a.player.id%4)*18;
+  label(dc,x-w/2,labelY,name,RGB(222,227,239));
   if(selected&&*selected==a.player.id&&showAim){rect(dc,x-w/2-4,y-h/2-4,w+8,h+8,RGB(249,220,98),2);aim=dpx::smoothStep(aim,*pos,settings.smooth);}
  }
  if(!selected)aim=dpx::smoothStep(aim,{(double)cx,(double)cy},settings.smooth);
  if(showAim){line(dc,(int)aim.x-9,(int)aim.y,(int)aim.x+9,(int)aim.y,RGB(255,218,105),2);line(dc,(int)aim.x,(int)aim.y-9,(int)aim.x,(int)aim.y+9,RGB(255,218,105),2);}
  line(dc,cx-12,cy,cx+12,cy,RGB(220,230,240));line(dc,cx,cy-12,cx,cy+12,RGB(220,230,240));
  fill(dc,12,12,std::max(0,std::min(canvasW-24,760)),105,RGB(25,33,49));
- label(dc,24,20,L"DPX-EXTERN v0.6 | OFFLINE TRAINING + GAME STATUS",RGB(111,225,202));
+ label(dc,24,20,L"DPX-EXTERN v0.6.1 | OFFLINE TRAINING + GAME STATUS",RGB(111,225,202));
  label(dc,24,43,L"F1 ESP  F2 HEALTH  F3 AIM GUIDE  F4 VISIBLE ONLY  SPACE PAUSE",RGB(220,225,240));
  label(dc,24,65,L"UP/DOWN FOV  LEFT/RIGHT SMOOTH  R RESET  ESC EXIT",RGB(220,225,240));
  wchar_t status[150];wsprintfW(status,L"FOV: %d px   SMOOTH: %d   VISIBLE ONLY: %s",(int)settings.aimFovPixels,(int)settings.smooth,settings.visibleOnly?L"ON":L"OFF");label(dc,24,88,status,RGB(255,207,109));
@@ -78,6 +80,6 @@ LRESULT CALLBACK proc(HWND w,UINT msg,WPARAM wp,LPARAM lp){
 int WINAPI wWinMain(HINSTANCE instance,HINSTANCE,LPWSTR,int show){
  WNDCLASSW cls{};cls.lpfnWndProc=proc;cls.hInstance=instance;cls.lpszClassName=L"DPXExternSimulator";cls.hCursor=LoadCursor(nullptr,IDC_CROSS);cls.hbrBackground=(HBRUSH)GetStockObject(BLACK_BRUSH);
  if(!RegisterClassW(&cls))return 1;
- HWND w=CreateWindowExW(0,cls.lpszClassName,L"DPX-EXTERN v0.6 | OFFLINE TRAINING",WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,1300,760,nullptr,nullptr,instance,nullptr);
+ HWND w=CreateWindowExW(0,cls.lpszClassName,L"DPX-EXTERN v0.6.1 | OFFLINE TRAINING",WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,1300,760,nullptr,nullptr,instance,nullptr);
  if(!w)return 2;ShowWindow(w,show);UpdateWindow(w);MSG msg;while(GetMessageW(&msg,nullptr,0,0)>0){TranslateMessage(&msg);DispatchMessageW(&msg);}return (int)msg.wParam;
 }
