@@ -1,4 +1,7 @@
 // C++17 / Windows 10-11 / controlled FPS simulator
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #define UNICODE
 #define _UNICODE
 #include <windows.h>
