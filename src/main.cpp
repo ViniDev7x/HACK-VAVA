@@ -1,6 +1,7 @@
 // C++17 / CLI simulation
 #include "core.hpp"
 #include <iostream>
+#include <string>
 int main(){
  dpx::Camera camera{{0,0,0},90,1280,720};
  dpx::Settings settings;
